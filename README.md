@@ -17,7 +17,7 @@ zig fetch --save git+https://github.com/castholm/SDL.git
 const sdl_dep = b.dependency("sdl", .{
     .target = target,
     .optimize = optimize,
-    //.link_mode = .dynamic,
+    //.preferred_link_mode = .dynamic,
 });
 const sdl_lib = sdl_dep.artifact("SDL3");
 const sdl_test_lib = sdl_dep.artifact("SDL3_test");

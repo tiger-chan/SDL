@@ -8,10 +8,10 @@ const version: std.SemanticVersion = .{ .major = 3, .minor = 1, .patch = 6 };
 pub fn build(b: *std.Build) void {
     const target = b.standardTargetOptions(.{});
     const optimize = b.standardOptimizeOption(.{});
-    const link_mode = b.option(
+    const preferred_link_mode = b.option(
         std.builtin.LinkMode,
-        "link_mode",
-        "Build SDL as a statically or dynamically linked library",
+        "preferred_link_mode",
+        "Prefer building SDL as a statically or dynamically linked library",
     ) orelse .dynamic;
     const install_build_config_h = b.option(
         bool,
@@ -537,7 +537,7 @@ pub fn build(b: *std.Build) void {
         },
     });
 
-    const sdl_lib: *std.Build.Step.Compile = switch (link_mode) {
+    const sdl_lib: *std.Build.Step.Compile = switch (preferred_link_mode) {
         inline else => |x| switch (x) {
             .static => std.Build.addStaticLibrary,
             .dynamic => std.Build.addSharedLibrary,
