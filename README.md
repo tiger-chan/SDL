@@ -7,6 +7,22 @@ SPDX-License-Identifier: MIT
 
 This is a port of SDL 3.0 to the Zig build system, packaged for the Zig package manager.
 
+## Usage
+
+```sh
+zig fetch --save git+https://github.com/castholm/SDL
+```
+
+```zig
+const sdl_dep = b.dependency("sdl", .{
+    .target = target,
+    .optimize = optimize,
+    //.link_mode = .dynamic,
+});
+const sdl_lib = sdl_dep.artifact("SDL3");
+const sdl_test_lib = sdl_dep.artifact("SDL3_test");
+```
+
 ## License
 
 This repository is [REUSE-compliant](https://reuse.software/). The effective SPDX license expression for the repository as a whole is:
