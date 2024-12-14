@@ -10,7 +10,7 @@ This is a port of SDL 3.0 to the Zig build system, packaged for the Zig package 
 ## Usage
 
 ```sh
-zig fetch --save git+https://github.com/castholm/SDL
+zig fetch --save git+https://github.com/castholm/SDL.git
 ```
 
 ```zig

@@ -5,7 +5,13 @@
     .name = "sdl",
     .version = "3.1.6",
     .minimum_zig_version = "0.12.1",
-    .dependencies = .{},
+    .dependencies = .{
+        .sdl_linux_deps = .{
+            .url = "git+https://github.com/castholm/SDL_linux_deps.git#d97bd5c63ede16066be9e90a9279953e24a06501",
+            .hash = "122046c904f05da5746c6635a2dc5fcddf48f8758bbd780c78ef2c769570d02f0566",
+            .lazy = true,
+        },
+    },
     .paths = .{
         "include/",
         "src/",
