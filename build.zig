@@ -12,7 +12,7 @@ pub fn build(b: *std.Build) void {
         std.builtin.LinkMode,
         "preferred_link_mode",
         "Prefer building SDL as a statically or dynamically linked library",
-    ) orelse .dynamic;
+    ) orelse .static;
     const install_build_config_h = b.option(
         bool,
         "install_build_config_h",
