@@ -497,7 +497,7 @@ pub fn build(b: *std.Build) void {
         .optimize = optimize,
         .link_libc = true,
     });
-    const sdl_uclibc_mod = &sdl_uclibc_lib.root_module;
+    const sdl_uclibc_mod = rootModulePtr(sdl_uclibc_lib);
 
     sdl_uclibc_mod.addCMacro("USING_GENERATED_CONFIG_H", "1");
 
@@ -549,7 +549,7 @@ pub fn build(b: *std.Build) void {
             .link_libc = true,
         }),
     };
-    const sdl_mod = &sdl_lib.root_module;
+    const sdl_mod = rootModulePtr(sdl_lib);
 
     sdl_mod.addCMacro("USING_GENERATED_CONFIG_H", "1");
     sdl_mod.addCMacro("SDL_BUILD_MAJOR_VERSION", std.fmt.comptimePrint("{}", .{version.major}));
@@ -1016,7 +1016,7 @@ pub fn build(b: *std.Build) void {
         .optimize = optimize,
         .link_libc = true,
     });
-    const sdl_test_mod = &sdl_test_lib.root_module;
+    const sdl_test_mod = rootModulePtr(sdl_test_lib);
 
     sdl_test_mod.addConfigHeader(build_config_h);
     sdl_test_mod.addConfigHeader(revision_h);
@@ -1125,3 +1125,12 @@ const common_c_flags = .{
     "-Wno-unused-local-typedefs",
     "-Wimplicit-fallthrough",
 };
+
+fn rootModulePtr(artifact: *std.Build.Step.Compile) *std.Build.Module {
+    const struct_tag = if (@hasField(std.builtin.Type, "Type")) .Struct else .@"struct";
+    if (@typeInfo(@TypeOf(artifact.root_module)) == struct_tag) {
+        return &artifact.root_module;
+    } else {
+        return artifact.root_module;
+    }
+}
