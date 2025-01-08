@@ -1,6 +1,6 @@
 /*
   Simple DirectMedia Layer
-  Copyright (C) 1997-2024 Sam Lantinga <slouken@libsdl.org>
+  Copyright (C) 1997-2025 Sam Lantinga <slouken@libsdl.org>
 
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -18,42 +18,22 @@
      misrepresented as being the original software.
   3. This notice may not be removed or altered from any source distribution.
 */
+
 #include "SDL_internal.h"
 
-#ifdef SDL_TIMER_NGAGE
+#ifndef SDL_x11xsync_h_
+#define SDL_x11xsync_h_
 
-#include <e32std.h>
-#include <e32hal.h>
+#ifdef SDL_VIDEO_DRIVER_X11_XSYNC
 
-static TUint start_tick = 0;
+extern void X11_InitXsync(SDL_VideoDevice *_this);
+extern int X11_XsyncIsInitialized(void);
+int X11_InitResizeSync(SDL_Window *window);
+void X11_TermResizeSync(SDL_Window *window);
+void X11_HandleSyncRequest(SDL_Window *window, XClientMessageEvent *event);
+void X11_HandleConfigure(SDL_Window *window, XConfigureEvent *event);
+void X11_HandlePresent(SDL_Window *window);
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+#endif /* SDL_VIDEO_DRIVER_X11_XSYNC */
 
-
-Uint64 SDL_GetPerformanceCounter(void)
-{
-    // FIXME: Need to account for 32-bit wrapping
-    return (Uint64)User::TickCount();
-}
-
-Uint64 SDL_GetPerformanceFrequency(void)
-{
-    return SDL_US_PER_SECOND;
-}
-
-void SDL_SYS_DelayNS(Uint64 ns)
-{
-    const Uint64 max_delay = 0x7fffffffLL * SDL_NS_PER_US;
-    if (ns > max_delay) {
-        ns = max_delay;
-    }
-    User::After(TTimeIntervalMicroSeconds32((TInt)SDL_NS_TO_US(ns)));
-}
-
-#ifdef __cplusplus
-}
-#endif
-
-#endif // SDL_TIMER_NGAGE
+#endif /* SDL_x11xsync_h_ */

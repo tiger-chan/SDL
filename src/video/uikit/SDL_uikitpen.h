@@ -1,6 +1,6 @@
 /*
   Simple DirectMedia Layer
-  Copyright (C) 1997-2024 Sam Lantinga <slouken@libsdl.org>
+  Copyright (C) 1997-2025 Sam Lantinga <slouken@libsdl.org>
 
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -19,20 +19,21 @@
   3. This notice may not be removed or altered from any source distribution.
 */
 
-#ifndef SDL_ngagewindow_h
-#define SDL_ngagewindow_h
+#ifndef SDL_uikitpen_h_
+#define SDL_uikitpen_h_
 
-#include "../SDL_sysvideo.h"
+#include "SDL_uikitvideo.h"
+#include "SDL_uikitwindow.h"
 
-#include "SDL_ngagevideo.h"
+extern bool UIKit_InitPen(SDL_VideoDevice *_this);
+extern void UIKit_HandlePenMotion(SDL_uikitview *view, UITouch *pencil);
+extern void UIKit_HandlePenPress(SDL_uikitview *view, UITouch *pencil);
+extern void UIKit_HandlePenRelease(SDL_uikitview *view, UITouch *pencil);
 
-typedef struct
-{
-    SDL_Window *sdl_window;
+#if !defined(SDL_PLATFORM_TVOS) && defined(__IPHONE_13_0)
+extern void UIKit_HandlePenHover(SDL_uikitview *view, UIHoverGestureRecognizer *recognizer) API_AVAILABLE(ios(13.0));
+#endif
 
-} NGAGE_Window;
+extern void UIKit_QuitPen(SDL_VideoDevice *_this);
 
-extern int NGAGE_CreateWindow(SDL_VideoDevice *_this, SDL_Window *window, SDL_PropertiesID create_props);
-extern void NGAGE_DestroyWindow(SDL_VideoDevice *_this, SDL_Window *window);
-
-#endif // SDL_ngagewindow
+#endif // SDL_uikitpen_h_

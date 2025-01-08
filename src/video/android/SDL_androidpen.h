@@ -1,6 +1,6 @@
 /*
   Simple DirectMedia Layer
-  Copyright (C) 1997-2024 Sam Lantinga <slouken@libsdl.org>
+  Copyright (C) 1997-2025 Sam Lantinga <slouken@libsdl.org>
 
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -18,19 +18,8 @@
      misrepresented as being the original software.
   3. This notice may not be removed or altered from any source distribution.
 */
-
 #include "SDL_internal.h"
 
-extern bool SDL_NGAGE_CreateWindowFramebuffer(SDL_VideoDevice *_this, SDL_Window *window, SDL_PixelFormat *format, void **pixels, int *pitch);
-extern bool SDL_NGAGE_UpdateWindowFramebuffer(SDL_VideoDevice *_this, SDL_Window *window, const SDL_Rect *rects, int numrects);
-extern void SDL_NGAGE_DestroyWindowFramebuffer(SDL_VideoDevice *_this, SDL_Window *window);
+#include "SDL_androidvideo.h"
 
-/****************************************************************************/
-// Runtime
-/****************************************************************************/
-
-class NGAGE_Runtime
-{
-  public:
-    IMPORT_C static void GetScreenInfo(TScreenInfoV01 &screenInfo2);
-};
+extern void Android_OnPen(SDL_Window *window, int pen_id_in, int button, int action, float x, float y, float p);

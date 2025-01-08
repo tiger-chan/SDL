@@ -1,6 +1,6 @@
 /*
   Simple DirectMedia Layer
-  Copyright (C) 1997-2024 Sam Lantinga <slouken@libsdl.org>
+  Copyright (C) 1997-2025 Sam Lantinga <slouken@libsdl.org>
 
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -20,30 +20,6 @@
 */
 #include "SDL_internal.h"
 
-#include "../SDL_sysjoystick.h"
-#include "../SDL_joystick_c.h"
-#include "SDL_steamcontroller.h"
-
-void SDL_InitSteamControllers(SteamControllerConnectedCallback_t connectedCallback,
-                              SteamControllerDisconnectedCallback_t disconnectedCallback)
-{
-}
-
-void SDL_GetSteamControllerInputs(int *nbuttons, int *naxes, int *nhats)
-{
-    *nbuttons = 0;
-    *naxes = 0;
-    *nhats = 0;
-}
-
-void SDL_UpdateSteamControllers(void)
-{
-}
-
-void SDL_UpdateSteamController(SDL_Joystick *joystick)
-{
-}
-
-void SDL_QuitSteamControllers(void)
-{
-}
+extern void SDL_IncrementTrayCount(void);
+extern void SDL_DecrementTrayCount(void);
+extern bool SDL_HasNoActiveTrays(void);

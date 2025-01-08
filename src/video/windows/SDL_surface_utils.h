@@ -1,6 +1,6 @@
 /*
   Simple DirectMedia Layer
-  Copyright (C) 1997-2024 Sam Lantinga <slouken@libsdl.org>
+  Copyright (C) 1997-2025 Sam Lantinga <slouken@libsdl.org>
 
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -18,20 +18,21 @@
      misrepresented as being the original software.
   3. This notice may not be removed or altered from any source distribution.
 */
-
-#ifndef SDL_steamcontroller_h_
-#define SDL_steamcontroller_h_
-
 #include "SDL_internal.h"
 
-typedef bool (*SteamControllerConnectedCallback_t)(const char *name, SDL_GUID guid, SDL_JoystickID *device_instance);
-typedef void (*SteamControllerDisconnectedCallback_t)(SDL_JoystickID device_instance);
+#ifndef SDL_surface_utils_h_
+#define SDL_surface_utils_h_
 
-void SDL_InitSteamControllers(SteamControllerConnectedCallback_t connectedCallback,
-                              SteamControllerDisconnectedCallback_t disconnectedCallback);
-void SDL_GetSteamControllerInputs(int *nbuttons, int *naxes, int *nhats);
-void SDL_UpdateSteamControllers(void);
-void SDL_UpdateSteamController(SDL_Joystick *joystick);
-void SDL_QuitSteamControllers(void);
+#include "../../core/windows/SDL_windows.h"
 
-#endif // SDL_steamcontroller_h_
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+extern HICON CreateIconFromSurface(SDL_Surface *surface);
+
+#ifdef __cplusplus
+}
+#endif
+
+#endif

@@ -1,6 +1,6 @@
 /*
   Simple DirectMedia Layer
-  Copyright (C) 1997-2024 Sam Lantinga <slouken@libsdl.org>
+  Copyright (C) 1997-2025 Sam Lantinga <slouken@libsdl.org>
 
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -345,4 +345,32 @@ done:
     }
     return result;
 }
+
+char *SDL_SYS_GetCurrentDirectory(void)
+{
+    WCHAR *wstr = NULL;
+    DWORD buflen = 0;
+    while (true) {
+        const DWORD bw = GetCurrentDirectoryW(buflen, wstr);
+        if (bw == 0) {
+            WIN_SetError("GetCurrentDirectoryW failed");
+            return NULL;
+        } else if (bw < buflen) {
+            break;  // we got it!
+        }
+
+        void *ptr = SDL_realloc(wstr, bw * sizeof (WCHAR));
+        if (!ptr) {
+            SDL_free(wstr);
+            return NULL;
+        }
+        wstr = (WCHAR *) ptr;
+        buflen = bw;
+    }
+
+    char *retval = WIN_StringToUTF8W(wstr);
+    SDL_free(wstr);
+    return retval;
+}
+
 #endif // SDL_FILESYSTEM_WINDOWS

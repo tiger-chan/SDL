@@ -1,6 +1,6 @@
 /*
   Simple DirectMedia Layer
-  Copyright (C) 1997-2024 Sam Lantinga <slouken@libsdl.org>
+  Copyright (C) 1997-2025 Sam Lantinga <slouken@libsdl.org>
 
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -592,7 +592,8 @@ static SDL_Cursor *Wayland_CreateSystemCursor(SDL_SystemCursor id)
 
 static SDL_Cursor *Wayland_CreateDefaultCursor(void)
 {
-    return Wayland_CreateSystemCursor(SDL_SYSTEM_CURSOR_DEFAULT);
+    SDL_SystemCursor id = SDL_GetDefaultSystemCursor();
+    return Wayland_CreateSystemCursor(id);
 }
 
 static void Wayland_FreeCursorData(SDL_CursorData *d)

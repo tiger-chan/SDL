@@ -1,6 +1,6 @@
 /*
   Simple DirectMedia Layer
-  Copyright (C) 1997-2024 Sam Lantinga <slouken@libsdl.org>
+  Copyright (C) 1997-2025 Sam Lantinga <slouken@libsdl.org>
 
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -18,9 +18,13 @@
      misrepresented as being the original software.
   3. This notice may not be removed or altered from any source distribution.
 */
+#include "../SDL_internal.h"
 
-#include "SDL_internal.h"
+#ifndef SDL_asyncio_c_h_
+#define SDL_asyncio_c_h_
 
-#include "SDL_ngagevideo.h"
+// Shutdown any still-existing Async I/O. Note that there is no Init function, as it inits on-demand!
+extern void SDL_QuitAsyncIO(void);
 
-extern void NGAGE_PumpEvents(SDL_VideoDevice *_this);
+#endif // SDL_asyncio_c_h_
+
