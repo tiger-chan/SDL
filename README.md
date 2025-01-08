@@ -51,13 +51,13 @@ Building for x86-64 Windows from any host system works out of the box.
 
 ### Linux
 
-Building for x86-64 Linux from any host system works out of the box. The [castholm/SDL_linux_deps](https://github.com/castholm/SDL_linux_deps) package provides supplementary headers and source files requires for compiling for Linux.
+Building for x86-64 Linux from any host system works out of the box. The [castholm/SDL_linux_deps](https://github.com/castholm/SDL_linux_deps) package provides supplementary headers and source files required for compiling for Linux.
 
 ### macOS
 
 Building for macOS requires Xcode 14.1 or later to be installed on the host system.
 
-When building for non-native targets (such as for x86-64 from a 64-bit ARM Mac), you must provide a path to the macOS SDK with `--sysroot`, which can be obtained by running `xcrun --sdk macosx --show-sdk-path`:
+When building for non-native targets (for example for x86-64 from an AArch64 Mac), you must provide a path to the macOS SDK via `--sysroot`. This path can be obtained by running `xcrun --sdk macosx --show-sdk-path`:
 
 ```sh
 macos_sdk_path=$(xcrun --sdk macosx --show-sdk-path)

@@ -3,9 +3,9 @@
 
 const std = @import("std");
 
-pub const version: std.SemanticVersion = .{ .major = 3, .minor = 1, .patch = 6 };
+pub const version: std.SemanticVersion = .{ .major = 3, .minor = 1, .patch = 8 };
 const formatted_version = std.fmt.comptimePrint("SDL-{}", .{version});
-pub const vendor_info = "https://github.com/castholm/SDL 0.1.0";
+pub const vendor_info = "https://github.com/castholm/SDL 0.1.1";
 pub const revision = formatted_version ++ " (" ++ vendor_info ++ ")";
 
 pub fn build(b: *std.Build) void {
@@ -57,9 +57,12 @@ pub fn build(b: *std.Build) void {
             .HAVE_GCC_ATOMICS = windows or linux or macos,
             .HAVE_GCC_SYNC_LOCK_TEST_AND_SET = false,
             .SDL_DISABLE_ALLOCA = false,
+            .HAVE_FLOAT_H = windows or linux or macos,
+            .HAVE_STDARG_H = windows or linux or macos,
+            .HAVE_STDDEF_H = windows or linux or macos,
+            .HAVE_STDINT_H = windows or linux or macos,
             .HAVE_LIBC = windows or linux or macos,
             .HAVE_ALLOCA_H = linux or macos,
-            .HAVE_FLOAT_H = windows or linux or macos,
             .HAVE_ICONV_H = linux or macos,
             .HAVE_INTTYPES_H = windows or linux or macos,
             .HAVE_LIMITS_H = windows or linux or macos,
@@ -67,10 +70,6 @@ pub fn build(b: *std.Build) void {
             .HAVE_MATH_H = windows or linux or macos,
             .HAVE_MEMORY_H = windows or linux or macos,
             .HAVE_SIGNAL_H = windows or linux or macos,
-            .HAVE_STDARG_H = windows or linux or macos,
-            .HAVE_STDBOOL_H = windows or linux or macos,
-            .HAVE_STDDEF_H = windows or linux or macos,
-            .HAVE_STDINT_H = windows or linux or macos,
             .HAVE_STDIO_H = windows or linux or macos,
             .HAVE_STDLIB_H = windows or linux or macos,
             .HAVE_STRINGS_H = windows or linux or macos,
@@ -80,10 +79,7 @@ pub fn build(b: *std.Build) void {
             .HAVE_PTHREAD_NP_H = false,
             .HAVE_DLOPEN = linux or macos,
             .HAVE_MALLOC = windows or linux or macos,
-            .HAVE_CALLOC = windows or linux or macos,
-            .HAVE_REALLOC = windows or linux or macos,
             .HAVE_FDATASYNC = linux,
-            .HAVE_FREE = windows or linux or macos,
             .HAVE_GETENV = windows or linux or macos,
             .HAVE_GETHOSTNAME = linux or macos,
             .HAVE_SETENV = linux or macos,
@@ -99,8 +95,6 @@ pub fn build(b: *std.Build) void {
             .HAVE_WCSNLEN = windows or linux or macos,
             .HAVE_WCSLCPY = macos,
             .HAVE_WCSLCAT = macos,
-            .HAVE__WCSDUP = windows,
-            .HAVE_WCSDUP = windows or linux or macos,
             .HAVE_WCSSTR = windows or linux or macos,
             .HAVE_WCSCMP = windows or linux or macos,
             .HAVE_WCSNCMP = windows or linux or macos,
@@ -111,8 +105,6 @@ pub fn build(b: *std.Build) void {
             .HAVE_STRLCAT = macos,
             .HAVE_STRPBRK = windows or linux or macos,
             .HAVE__STRREV = windows,
-            .HAVE__STRUPR = false,
-            .HAVE__STRLWR = false,
             .HAVE_INDEX = linux or macos,
             .HAVE_RINDEX = linux or macos,
             .HAVE_STRCHR = windows or linux or macos,
@@ -135,8 +127,6 @@ pub fn build(b: *std.Build) void {
             .HAVE_ATOF = windows or linux or macos,
             .HAVE_STRCMP = windows or linux or macos,
             .HAVE_STRNCMP = windows or linux or macos,
-            .HAVE_STRCASESTR = linux or macos,
-            .HAVE_SSCANF = windows or linux or macos,
             .HAVE_VSSCANF = windows or linux or macos,
             .HAVE_VSNPRINTF = windows or linux or macos,
             .HAVE_ACOS = windows or linux or macos,
@@ -151,6 +141,7 @@ pub fn build(b: *std.Build) void {
             .HAVE_CEILF = windows or linux or macos,
             .HAVE_COPYSIGN = windows or linux or macos,
             .HAVE_COPYSIGNF = windows or linux or macos,
+            .HAVE__COPYSIGN = windows,
             .HAVE_COS = windows or linux or macos,
             .HAVE_COSF = windows or linux or macos,
             .HAVE_EXP = windows or linux or macos,
@@ -189,6 +180,7 @@ pub fn build(b: *std.Build) void {
             .HAVE_TANF = windows or linux or macos,
             .HAVE_TRUNC = windows or linux or macos,
             .HAVE_TRUNCF = windows or linux or macos,
+            .HAVE__FSEEKI64 = windows,
             .HAVE_FOPEN64 = windows or linux,
             .HAVE_FSEEKO = windows or linux or macos,
             .HAVE_FSEEKO64 = windows or linux,
@@ -218,8 +210,6 @@ pub fn build(b: *std.Build) void {
             .HAVE_DBUS_DBUS_H = linux,
             .HAVE_FCITX = linux,
             .HAVE_IBUS_IBUS_H = linux,
-            .HAVE_SYS_INOTIFY_H = linux,
-            .HAVE_INOTIFY_INIT = linux,
             .HAVE_INOTIFY_INIT1 = linux,
             .HAVE_INOTIFY = linux,
             .HAVE_LIBUSB = linux,
@@ -227,7 +217,7 @@ pub fn build(b: *std.Build) void {
             .HAVE_LINUX_INPUT_H = linux,
             .HAVE_LIBUDEV_H = linux,
             .HAVE_LIBDECOR_H = linux,
-            .HAVE_D3D11_H = windows,
+            .HAVE_LIBURING_H = linux,
             .HAVE_DDRAW_H = windows,
             .HAVE_DSOUND_H = windows,
             .HAVE_DINPUT_H = windows,
@@ -237,25 +227,24 @@ pub fn build(b: *std.Build) void {
             .HAVE_DXGI_H = windows,
             .HAVE_DXGI1_6_H = windows,
             .HAVE_MMDEVICEAPI_H = windows,
-            .HAVE_AUDIOCLIENT_H = windows,
             .HAVE_TPCSHRD_H = windows,
-            .HAVE_SENSORSAPI_H = windows,
             .HAVE_ROAPI_H = windows,
             .HAVE_SHELLSCALINGAPI_H = windows,
             .USE_POSIX_SPAWN = false,
             .SDL_DEFAULT_ASSERT_LEVEL_CONFIGURED = false,
             .SDL_DEFAULT_ASSERT_LEVEL = null,
             .SDL_AUDIO_DISABLED = false,
+            .SDL_VIDEO_DISABLED = false,
+            .SDL_GPU_DISABLED = false,
+            .SDL_RENDER_DISABLED = false,
+            .SDL_CAMERA_DISABLED = false,
             .SDL_JOYSTICK_DISABLED = false,
             .SDL_HAPTIC_DISABLED = false,
             .SDL_HIDAPI_DISABLED = false,
-            .SDL_SENSOR_DISABLED = false,
-            .SDL_RENDER_DISABLED = false,
-            .SDL_THREADS_DISABLED = false,
-            .SDL_VIDEO_DISABLED = false,
             .SDL_POWER_DISABLED = false,
-            .SDL_CAMERA_DISABLED = false,
-            .SDL_GPU_DISABLED = false,
+            .SDL_SENSOR_DISABLED = false,
+            .SDL_DIALOG_DISABLED = false,
+            .SDL_THREADS_DISABLED = false,
             .SDL_AUDIO_DRIVER_ALSA = linux,
             .SDL_AUDIO_DRIVER_ALSA_DYNAMIC = if (lazy_linux_deps_values) |x| b.fmt("\"{s}\"", .{x.alsa_soname}) else "",
             .SDL_AUDIO_DRIVER_OPENSLES = false,
@@ -324,7 +313,6 @@ pub fn build(b: *std.Build) void {
             .SDL_SENSOR_N3DS = false,
             .SDL_LOADSO_DLOPEN = linux or macos,
             .SDL_LOADSO_DUMMY = false,
-            .SDL_LOADSO_LDG = false,
             .SDL_LOADSO_WINDOWS = windows,
             .SDL_THREAD_GENERIC_COND_SUFFIX = windows,
             .SDL_THREAD_GENERIC_RWLOCK_SUFFIX = windows,
@@ -343,7 +331,6 @@ pub fn build(b: *std.Build) void {
             .SDL_TIME_PS2 = false,
             .SDL_TIME_N3DS = false,
             .SDL_TIMER_HAIKU = false,
-            .SDL_TIMER_DUMMY = false,
             .SDL_TIMER_UNIX = linux or macos,
             .SDL_TIMER_WINDOWS = windows,
             .SDL_TIMER_VITA = false,
@@ -395,6 +382,7 @@ pub fn build(b: *std.Build) void {
             .SDL_VIDEO_DRIVER_X11_XRANDR = linux,
             .SDL_VIDEO_DRIVER_X11_XSCRNSAVER = linux,
             .SDL_VIDEO_DRIVER_X11_XSHAPE = linux,
+            .SDL_VIDEO_DRIVER_X11_XSYNC = linux,
             .SDL_VIDEO_DRIVER_QNX = false,
             .SDL_VIDEO_RENDER_D3D = windows,
             .SDL_VIDEO_RENDER_D3D11 = windows,
@@ -410,13 +398,10 @@ pub fn build(b: *std.Build) void {
             .SDL_VIDEO_OPENGL = windows or linux or macos,
             .SDL_VIDEO_OPENGL_ES = linux,
             .SDL_VIDEO_OPENGL_ES2 = windows or linux or macos,
-            .SDL_VIDEO_OPENGL_BGL = false,
             .SDL_VIDEO_OPENGL_CGL = macos,
             .SDL_VIDEO_OPENGL_GLX = linux,
             .SDL_VIDEO_OPENGL_WGL = windows,
             .SDL_VIDEO_OPENGL_EGL = windows or linux or macos,
-            .SDL_VIDEO_OPENGL_OSMESA = false,
-            .SDL_VIDEO_OPENGL_OSMESA_DYNAMIC = "",
             .SDL_VIDEO_VULKAN = windows or linux or macos,
             .SDL_VIDEO_METAL = macos,
             .SDL_GPU_D3D11 = windows,
@@ -446,7 +431,6 @@ pub fn build(b: *std.Build) void {
             .SDL_FILESYSTEM_PSP = false,
             .SDL_FILESYSTEM_PS2 = false,
             .SDL_FILESYSTEM_N3DS = false,
-            .SDL_STORAGE_GENERIC = windows or linux or macos,
             .SDL_STORAGE_STEAM = windows or linux or macos,
             .SDL_FSOPS_POSIX = linux or macos,
             .SDL_FSOPS_WINDOWS = windows,
@@ -462,11 +446,11 @@ pub fn build(b: *std.Build) void {
             .SDL_CAMERA_DRIVER_PIPEWIRE_DYNAMIC = if (lazy_linux_deps_values) |x| b.fmt("\"{s}\"", .{x.pipewire_soname}) else "",
             .SDL_CAMERA_DRIVER_VITA = false,
             .SDL_DIALOG_DUMMY = false,
-            .SDL_MISC_DUMMY = false,
-            .SDL_LOCALE_DUMMY = false,
             .SDL_ALTIVEC_BLITTERS = false,
             .DYNAPI_NEEDS_DLOPEN = linux or macos,
             .SDL_USE_IME = linux,
+            .SDL_DISABLE_WINDOWS_IME = false,
+            .SDL_GDK_TEXTINPUT = false,
             .SDL_IPHONE_KEYBOARD = false,
             .SDL_IPHONE_LAUNCHSCREEN = false,
             .SDL_VIDEO_VITA_PIB = false,
@@ -593,6 +577,9 @@ pub fn build(b: *std.Build) void {
             if (target.result.cpu.arch == .x86_64 and target.result.abi.isGnu()) {
                 sdl_mod.addSystemIncludePath(dep.path("include/x86_64-linux-gnu"));
             }
+            if (target.result.cpu.arch == .aarch64 and target.result.abi.isGnu()) {
+                sdl_mod.addSystemIncludePath(dep.path("include/aarch64-linux-gnu"));
+            }
         }
     }
     if (macos) {
@@ -664,7 +651,9 @@ pub fn build(b: *std.Build) void {
             "src/events/SDL_touch.c",
             "src/events/SDL_windowevents.c",
             "src/events/imKStoUCS.c",
+            "src/file/SDL_asyncio.c",
             "src/file/SDL_iostream.c",
+            "src/file/generic/SDL_asyncio_generic.c",
             "src/filesystem/SDL_filesystem.c",
             "src/gpu/SDL_gpu.c",
             "src/haptic/SDL_haptic.c",
@@ -678,7 +667,6 @@ pub fn build(b: *std.Build) void {
             "src/main/SDL_runapp.c",
             "src/misc/SDL_url.c",
             "src/power/SDL_power.c",
-            "src/process/SDL_process.c",
             "src/render/SDL_d3dmath.c",
             "src/render/SDL_render.c",
             "src/render/SDL_render_unsupported.c",
@@ -755,6 +743,9 @@ pub fn build(b: *std.Build) void {
             "src/video/yuv2rgb/yuv_rgb_lsx.c",
             "src/video/yuv2rgb/yuv_rgb_sse.c",
             "src/video/yuv2rgb/yuv_rgb_std.c",
+            "src/dialog/SDL_dialog.c",
+            "src/process/SDL_process.c",
+            "src/tray/SDL_tray_utils.c",
         },
     });
     if (windows) {
@@ -777,7 +768,7 @@ pub fn build(b: *std.Build) void {
                 "src/misc/windows/SDL_sysurl.c",
                 "src/audio/directsound/SDL_directsound.c",
                 "src/audio/wasapi/SDL_wasapi.c",
-                "src/audio/wasapi/SDL_wasapi_win32.c",
+                "src/video/windows/SDL_surface_utils.c",
                 "src/video/windows/SDL_windowsclipboard.c",
                 "src/video/windows/SDL_windowsevents.c",
                 "src/video/windows/SDL_windowsframebuffer.c",
@@ -816,6 +807,7 @@ pub fn build(b: *std.Build) void {
                 "src/core/windows/SDL_windows.c",
                 "src/core/windows/SDL_xinput.c",
                 "src/core/windows/pch.c",
+                "src/tray/windows/SDL_tray.c",
                 "src/joystick/hidapi/SDL_hidapi_combined.c",
                 "src/joystick/hidapi/SDL_hidapi_gamecube.c",
                 "src/joystick/hidapi/SDL_hidapi_luna.c",
@@ -836,6 +828,7 @@ pub fn build(b: *std.Build) void {
                 "src/joystick/hidapi/SDL_hidapijoystick.c",
                 "src/joystick/windows/SDL_dinputjoystick.c",
                 "src/joystick/windows/SDL_rawinputjoystick.c",
+                "src/joystick/windows/SDL_windows_gaming_input.c",
                 "src/joystick/windows/SDL_windowsjoystick.c",
                 "src/joystick/windows/SDL_xinputjoystick.c",
                 "src/haptic/windows/SDL_dinputhaptic.c",
@@ -850,7 +843,6 @@ pub fn build(b: *std.Build) void {
                 "src/video/offscreen/SDL_offscreenvideo.c",
                 "src/video/offscreen/SDL_offscreenvulkan.c",
                 "src/video/offscreen/SDL_offscreenwindow.c",
-                "src/gpu/d3d11/SDL_gpu_d3d11.c",
                 "src/gpu/d3d12/SDL_gpu_d3d12.c",
                 "src/gpu/vulkan/SDL_gpu_vulkan.c",
                 "src/main/generic/SDL_sysmain_callbacks.c",
@@ -897,6 +889,7 @@ pub fn build(b: *std.Build) void {
                 "src/video/x11/SDL_x11window.c",
                 "src/video/x11/SDL_x11xfixes.c",
                 "src/video/x11/SDL_x11xinput2.c",
+                "src/video/x11/SDL_x11xsync.c",
                 "src/video/x11/edid-parse.c",
                 "src/video/x11/xsettings-client.c",
                 "src/video/kmsdrm/SDL_kmsdrmdyn.c",
@@ -917,6 +910,7 @@ pub fn build(b: *std.Build) void {
                 "src/video/wayland/SDL_waylandvideo.c",
                 "src/video/wayland/SDL_waylandvulkan.c",
                 "src/video/wayland/SDL_waylandwindow.c",
+                "src/tray/unix/SDL_tray.c",
                 "src/core/unix/SDL_appid.c",
                 "src/core/unix/SDL_poll.c",
                 "src/camera/v4l2/SDL_camera_v4l2.c",
@@ -929,6 +923,7 @@ pub fn build(b: *std.Build) void {
                 "src/core/linux/SDL_udev.c",
                 "src/core/linux/SDL_evdev.c",
                 "src/core/linux/SDL_evdev_kbd.c",
+                "src/file/io_uring/SDL_asyncio_liburing.c",
                 "src/core/linux/SDL_evdev_capabilities.c",
                 "src/core/linux/SDL_threadprio.c",
                 "src/joystick/hidapi/SDL_hidapi_combined.c",
@@ -950,7 +945,6 @@ pub fn build(b: *std.Build) void {
                 "src/joystick/hidapi/SDL_hidapi_xboxone.c",
                 "src/joystick/hidapi/SDL_hidapijoystick.c",
                 "src/joystick/linux/SDL_sysjoystick.c",
-                "src/joystick/steam/SDL_steamcontroller.c",
                 "src/thread/pthread/SDL_systhread.c",
                 "src/thread/pthread/SDL_sysmutex.c",
                 "src/thread/pthread/SDL_syscond.c",
@@ -1050,6 +1044,7 @@ pub fn build(b: *std.Build) void {
                 "src/video/cocoa/SDL_cocoawindow.m",
                 "src/render/metal/SDL_render_metal.m",
                 "src/gpu/metal/SDL_gpu_metal.m",
+                "src/tray/cocoa/SDL_tray.m",
                 "src/thread/pthread/SDL_systhread.c",
                 "src/thread/pthread/SDL_sysmutex.c",
                 "src/thread/pthread/SDL_syscond.c",
@@ -1104,6 +1099,7 @@ pub fn build(b: *std.Build) void {
         sdl_mod.linkFramework("CoreMedia", .{});
         sdl_mod.linkFramework("CoreVideo", .{});
         sdl_mod.linkFramework("Cocoa", .{});
+        sdl_mod.linkFramework("UniformTypeIdentifiers", .{ .weak = true });
         sdl_mod.linkFramework("IOKit", .{});
         sdl_mod.linkFramework("ForceFeedback", .{});
         sdl_mod.linkFramework("Carbon", .{});
@@ -1111,11 +1107,10 @@ pub fn build(b: *std.Build) void {
         sdl_mod.linkFramework("AudioToolbox", .{});
         sdl_mod.linkFramework("AVFoundation", .{});
         sdl_mod.linkFramework("Foundation", .{});
-        sdl_mod.linkFramework("CoreHaptics", .{});
         sdl_mod.linkFramework("GameController", .{ .weak = true });
         sdl_mod.linkFramework("Metal", .{ .weak = true });
         sdl_mod.linkFramework("QuartzCore", .{ .weak = true });
-        sdl_mod.linkFramework("UniformTypeIdentifiers", .{ .weak = true });
+        sdl_mod.linkFramework("CoreHaptics", .{});
     }
 
     sdl_lib.installHeadersDirectory(b.path("include/SDL3"), "SDL3", .{

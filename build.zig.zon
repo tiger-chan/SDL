@@ -3,12 +3,12 @@
 
 .{
     .name = "sdl",
-    .version = "0.1.0+SDL-3.1.6",
+    .version = "0.1.1+SDL-3.1.8",
     .minimum_zig_version = "0.12.1",
     .dependencies = .{
         .sdl_linux_deps = .{
-            .url = "git+https://github.com/castholm/SDL_linux_deps.git#d97bd5c63ede16066be9e90a9279953e24a06501",
-            .hash = "122046c904f05da5746c6635a2dc5fcddf48f8758bbd780c78ef2c769570d02f0566",
+            .url = "git+https://github.com/castholm/SDL_linux_deps.git#a8a96da850ff3c3d5c337c7dac95babc1e4aedf9",
+            .hash = "122086d80e01bd753df35351c1203e08a0a18f4a4ae3b4a10e91b000ab4c15e51ea0",
             .lazy = true,
         },
     },

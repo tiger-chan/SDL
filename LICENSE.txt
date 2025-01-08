@@ -1,7 +1,7 @@
 © 1990 RSA Data Security, Inc.
 © 1990-1992, 1999-2000, 2004, 2009-2010 Oracle and/or its affiliates
 © 1993 Sun Microsystems, Inc.
-© 1997-2024 Sam Lantinga <slouken@libsdl.org>
+© 1997-2025 Sam Lantinga <slouken@libsdl.org>
 © 1998-2021 Gareth McCaughan
 © 1999-2006 Brian Paul
 © 2001-2011 Andreas Schiffler
