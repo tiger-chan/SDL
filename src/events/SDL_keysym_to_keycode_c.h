@@ -18,25 +18,11 @@
      misrepresented as being the original software.
   3. This notice may not be removed or altered from any source distribution.
 */
-#include "SDL_internal.h"
 
-#if defined(SDL_PLATFORM_IOS) || defined(SDL_PLATFORM_TVOS)
+#ifndef SDL_keysym_to_keycode_c_h_
+#define SDL_keysym_to_keycode_c_h_
 
-#include "../SDL_sysurl.h"
+// Convert a keysym to an SDL key code
+extern SDL_Keycode SDL_GetKeyCodeFromKeySym(Uint32 keysym, Uint32 keycode, SDL_Keymod modifiers);
 
-#import <UIKit/UIKit.h>
-
-bool SDL_SYS_OpenURL(const char *url)
-{
-    @autoreleasepool {
-        NSString *nsstr = [NSString stringWithUTF8String:url];
-        NSURL *nsurl = [NSURL URLWithString:nsstr];
-        if (![[UIApplication sharedApplication] canOpenURL:nsurl]) {
-            return SDL_SetError("No handler registered for this type of URL");
-        }
-        [[UIApplication sharedApplication] openURL:nsurl options:@{} completionHandler:^(BOOL success) {}];
-        return true;
-    }
-}
-
-#endif // SDL_PLATFORM_IOS || SDL_PLATFORM_TVOS
+#endif // SDL_keysym_to_scancode_c_h_
