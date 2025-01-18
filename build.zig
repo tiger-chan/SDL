@@ -3,9 +3,9 @@
 
 const std = @import("std");
 
-pub const version: std.SemanticVersion = .{ .major = 3, .minor = 1, .patch = 8 };
+pub const version: std.SemanticVersion = .{ .major = 3, .minor = 1, .patch = 10 };
 const formatted_version = std.fmt.comptimePrint("SDL-{}", .{version});
-pub const vendor_info = "https://github.com/castholm/SDL 0.1.1";
+pub const vendor_info = "https://github.com/castholm/SDL 0.1.2";
 pub const revision = formatted_version ++ " (" ++ vendor_info ++ ")";
 
 pub fn build(b: *std.Build) void {
@@ -643,6 +643,7 @@ pub fn build(b: *std.Build) void {
             "src/events/SDL_events.c",
             "src/events/SDL_keyboard.c",
             "src/events/SDL_keymap.c",
+            "src/events/SDL_keysym_to_keycode.c",
             "src/events/SDL_keysym_to_scancode.c",
             "src/events/SDL_mouse.c",
             "src/events/SDL_pen.c",
@@ -651,13 +652,13 @@ pub fn build(b: *std.Build) void {
             "src/events/SDL_touch.c",
             "src/events/SDL_windowevents.c",
             "src/events/imKStoUCS.c",
-            "src/file/SDL_asyncio.c",
-            "src/file/SDL_iostream.c",
-            "src/file/generic/SDL_asyncio_generic.c",
             "src/filesystem/SDL_filesystem.c",
             "src/gpu/SDL_gpu.c",
             "src/haptic/SDL_haptic.c",
             "src/hidapi/SDL_hidapi.c",
+            "src/io/SDL_asyncio.c",
+            "src/io/SDL_iostream.c",
+            "src/io/generic/SDL_asyncio_generic.c",
             "src/joystick/SDL_gamepad.c",
             "src/joystick/SDL_joystick.c",
             "src/joystick/SDL_steam_virtual_gamepad.c",
@@ -765,6 +766,7 @@ pub fn build(b: *std.Build) void {
                 "src/core/windows/SDL_xinput.c",
                 "src/core/windows/pch.c",
                 "src/main/windows/SDL_sysmain_runapp.c",
+                "src/io/windows/SDL_asyncio_windows_ioring.c",
                 "src/misc/windows/SDL_sysurl.c",
                 "src/audio/directsound/SDL_directsound.c",
                 "src/audio/wasapi/SDL_wasapi.c",
@@ -923,7 +925,7 @@ pub fn build(b: *std.Build) void {
                 "src/core/linux/SDL_udev.c",
                 "src/core/linux/SDL_evdev.c",
                 "src/core/linux/SDL_evdev_kbd.c",
-                "src/file/io_uring/SDL_asyncio_liburing.c",
+                "src/io/io_uring/SDL_asyncio_liburing.c",
                 "src/core/linux/SDL_evdev_capabilities.c",
                 "src/core/linux/SDL_threadprio.c",
                 "src/joystick/hidapi/SDL_hidapi_combined.c",
@@ -1107,10 +1109,10 @@ pub fn build(b: *std.Build) void {
         sdl_mod.linkFramework("AudioToolbox", .{});
         sdl_mod.linkFramework("AVFoundation", .{});
         sdl_mod.linkFramework("Foundation", .{});
-        sdl_mod.linkFramework("GameController", .{ .weak = true });
-        sdl_mod.linkFramework("Metal", .{ .weak = true });
-        sdl_mod.linkFramework("QuartzCore", .{ .weak = true });
-        sdl_mod.linkFramework("CoreHaptics", .{});
+        sdl_mod.linkFramework("GameController", .{});
+        sdl_mod.linkFramework("Metal", .{});
+        sdl_mod.linkFramework("QuartzCore", .{});
+        sdl_mod.linkFramework("CoreHaptics", .{ .weak = true });
     }
 
     sdl_lib.installHeadersDirectory(b.path("include/SDL3"), "SDL3", .{

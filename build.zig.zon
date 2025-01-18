@@ -3,7 +3,7 @@
 
 .{
     .name = "sdl",
-    .version = "0.1.1+SDL-3.1.8",
+    .version = "0.1.2+SDL-3.1.10",
     .minimum_zig_version = "0.12.1",
     .dependencies = .{
         .sdl_linux_deps = .{

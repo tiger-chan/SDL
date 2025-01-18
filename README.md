@@ -5,7 +5,7 @@ SPDX-License-Identifier: MIT
 
 # SDL ported to the Zig build system
 
-This is a port of [SDL](https://libsdl.org/) 3.0 to the Zig build system, packaged for the Zig package manager.
+This is a port of [SDL](https://libsdl.org/) to the Zig build system, packaged for the Zig package manager.
 
 ## Usage
 
@@ -35,7 +35,9 @@ Example projects using this SDL package:
 Target \ Host|Windows|Linux|macOS
 -|:-:|:-:|:-:
 `x86_64-windows-gnu`|✅|✅|✅
+`aarch64-windows-gnu`|🧪|🧪|🧪
 `x86_64-linux-gnu`|✅|✅|✅
+`aarch64-linux-gnu`|🧪|🧪|🧪
 `x86_64-macos-none`|❌|❌|🉑
 `aarch64-macos-none`|❌|❌|🉑
 
@@ -43,19 +45,22 @@ Legend:
 
 - ✅ Supported
 - 🉑 Supported, but requires external SDKs
+- 🧪 Experimental
 - ❌ Not supported
 
 ### Windows
 
-Building for x86-64 Windows from any host system works out of the box.
+Building for x86-64 Windows from any host system works out of the box. AArch64 Windows support is experimental and not yet actively tested.
 
 ### Linux
 
-Building for x86-64 Linux from any host system works out of the box. The [castholm/SDL_linux_deps](https://github.com/castholm/SDL_linux_deps) package provides supplementary headers and source files required for compiling for Linux.
+Building for x86-64 Linux from any host system works out of the box. AArch64 Linux support is experimental and not yet actively tested.
+
+The [castholm/SDL_linux_deps](https://github.com/castholm/SDL_linux_deps) package provides supplementary headers and source files required for compiling for Linux.
 
 ### macOS
 
-Building for macOS requires Xcode 14.1 or later to be installed on the host system.
+Building for x86-64 or AArch64 macOS requires Xcode 14.1 or later to be installed on the host system.
 
 When building for non-native targets (for example for x86-64 from an AArch64 Mac), you must provide a path to the macOS SDK via `--sysroot`. This path can be obtained by running `xcrun --sdk macosx --show-sdk-path`:
 
@@ -74,6 +79,6 @@ This repository is [REUSE-compliant](https://reuse.software/). The effective SPD
 (BSD-3-Clause OR GPL-3.0 OR HIDAPI) AND Apache-2.0 AND BSD-3-Clause AND CC0-1.0 AND HIDAPI AND HPND-sell-variant AND MIT AND SunPro AND Zlib
 ```
 
-(This is the same as the upstream SDL repository.)
+(This is identical to the upstream SDL repository, just expressed in more explicit terms.)
 
 Copyright notices and license texts have been reproduced in [`LICENSE.txt`](LICENSE.txt), for your convenience.
