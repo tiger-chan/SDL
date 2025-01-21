@@ -6,14 +6,31 @@ version = 1
 
 [[annotations]]
 path = "**"
-SPDX-FileCopyrightText = "Copyright (C) 1997-2024 Sam Lantinga <slouken@libsdl.org>"
+SPDX-FileCopyrightText = "Copyright (C) 1997-2025 Sam Lantinga <slouken@libsdl.org>"
 SPDX-License-Identifier = "Zlib"
+
+[[annotations]]
+path = [
+    "include/SDL3/SDL_bits.h",
+    "src/main/psp/SDL_sysmain_runapp.c",
+    "src/main/windows/SDL_sysmain_runapp.c",
+    "src/render/SDL_render_debug_font.h",
+    "src/stdlib/SDL_crc16.c",
+    "src/stdlib/SDL_crc32.c",
+    "src/stdlib/SDL_malloc.c",
+    "src/stdlib/SDL_murmur3.c",
+    "src/stdlib/SDL_qsort.c",
+    "src/stdlib/SDL_strtokr.c",
+    "src/time/SDL_time.c",
+    "src/video/SDL_blit_slow.c",
+]
+SPDX-License-Identifier = "Zlib AND CC0-1.0"
 
 [[annotations]]
 path = "include/SDL3/SDL_egl.h"
 precedence = "override"
 SPDX-FileCopyrightText = [
-    "Copyright (C) 1997-2024 Sam Lantinga <slouken@libsdl.org>",
+    "Copyright (C) 1997-2025 Sam Lantinga <slouken@libsdl.org>",
     "Copyright (c) 2008-2018 The Khronos Group Inc.",
     "Copyright 2007-2020 The Khronos Group Inc.",
     "Copyright 2013-2020 The Khronos Group Inc.",
@@ -28,7 +45,7 @@ SPDX-License-Identifier = "Zlib AND HIDAPI"
 path = "include/SDL3/SDL_opengl.h"
 precedence = "override"
 SPDX-FileCopyrightText = [
-    "Copyright (C) 1997-2024 Sam Lantinga <slouken@libsdl.org>",
+    "Copyright (C) 1997-2025 Sam Lantinga <slouken@libsdl.org>",
     "Copyright (C) 1999-2006 Brian Paul",
     "Copyright (C) 2009 VMware, Inc.",
 ]
@@ -51,7 +68,7 @@ SPDX-License-Identifier = "MIT"
 path = "src/filesystem/unix/SDL_sysfilesystem.c"
 precedence = "override"
 SPDX-FileCopyrightText = [
-    "Copyright (C) 1997-2024 Sam Lantinga <slouken@libsdl.org>",
+    "Copyright (C) 1997-2025 Sam Lantinga <slouken@libsdl.org>",
     "Copyright (c) 2007 Red Hat, Inc.",
 ]
 SPDX-License-Identifier = "Zlib AND MIT"
@@ -156,29 +173,7 @@ SPDX-License-Identifier = "CC0-1.0"
 # See <https://datatracker.ietf.org/ipr/157/> for RSA's statement.
 
 [[annotations]]
-path = [
-    "include/SDL3/SDL_bits.h",
-    "src/main/psp/SDL_sysmain_runapp.c",
-    "src/main/windows/SDL_sysmain_runapp.c",
-    "src/render/SDL_render_debug_font.h",
-    "src/stdlib/SDL_crc16.c",
-    "src/stdlib/SDL_crc32.c",
-    "src/stdlib/SDL_malloc.c",
-    "src/stdlib/SDL_murmur3.c",
-    "src/stdlib/SDL_qsort.c",
-    "src/stdlib/SDL_strtokr.c",
-    "src/time/SDL_time.c",
-    "src/video/SDL_blit_slow.c",
-]
-SPDX-License-Identifier = "Zlib AND CC0-1.0"
-
-[[annotations]]
 path = "src/video/openvr/openvr_capi.h"
-SPDX-License-Identifier = "BSD-3-Clause"
-
-[[annotations]]
-path = "src/video/yuv2rgb/*"
-SPDX-FileCopyrightText = "Copyright (c) 2016, Adrien Descamps"
 SPDX-License-Identifier = "BSD-3-Clause"
 
 [[annotations]]
@@ -189,10 +184,15 @@ path = [
 SPDX-License-Identifier = "HPND-sell-variant"
 
 [[annotations]]
+path = "src/video/yuv2rgb/*"
+SPDX-FileCopyrightText = "Copyright (c) 2016, Adrien Descamps"
+SPDX-License-Identifier = "BSD-3-Clause"
+
+[[annotations]]
 path = "src/video/SDL_surface.c"
 precedence = "override"
 SPDX-FileCopyrightText = [
-    "Copyright (C) 1997-2024 Sam Lantinga <slouken@libsdl.org>",
+    "Copyright (C) 1997-2025 Sam Lantinga <slouken@libsdl.org>",
     "Copyright 2023 Collabora Ltd.",
 ]
 SPDX-License-Identifier = "Zlib"
