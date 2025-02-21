@@ -508,7 +508,9 @@ pub fn build(b: *std.Build) void {
     sdl_uclibc_mod.addIncludePath(b.path("src"));
 
     sdl_uclibc_mod.addCSourceFiles(.{
-        .flags = &common_c_flags,
+        .flags = &(common_c_flags ++ .{
+            "-fvisibility=hidden",
+        }),
         .files = &.{
             "src/libm/e_atan2.c",
             "src/libm/e_exp.c",
@@ -544,7 +546,11 @@ pub fn build(b: *std.Build) void {
             .dynamic => std.Build.addSharedLibrary,
         }(b, .{
             .name = "SDL3",
-            .version = version,
+            .version = .{
+                .major = 0,
+                .minor = version.minor,
+                .patch = version.patch,
+            },
             .target = target,
             .optimize = optimize,
             .link_libc = true,
@@ -593,20 +599,18 @@ pub fn build(b: *std.Build) void {
         }
     }
 
-    var sdl_c_flags = std.BoundedArray([]const u8, 16).fromSlice(&common_c_flags) catch @panic("OOM");
-    sdl_c_flags.appendSlice(&.{
-        "-std=c99",
-    }) catch @panic("OOM");
+    var sdl_c_flags: std.BoundedArray([]const u8, common_c_flags.len + 4) = .{};
+    sdl_c_flags.appendSliceAssumeCapacity(&common_c_flags);
+    sdl_c_flags.appendAssumeCapacity("-std=c99");
     if (linux) {
-        sdl_c_flags.appendSlice(&.{
-            "-pthread",
-        }) catch @panic("OOM");
+        sdl_c_flags.appendAssumeCapacity("-pthread");
     }
     if (macos) {
-        sdl_c_flags.appendSlice(&.{
-            "-pthread",
-            "-fobjc-arc",
-        }) catch @panic("OOM");
+        sdl_c_flags.appendAssumeCapacity("-pthread");
+        sdl_c_flags.appendAssumeCapacity("-fobjc-arc");
+    }
+    if (sdl_lib.linkage.? == .dynamic) {
+        sdl_c_flags.appendAssumeCapacity("-fvisibility=hidden");
     }
 
     sdl_mod.addCSourceFiles(.{
