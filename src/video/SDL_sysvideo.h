@@ -163,6 +163,8 @@ struct SDL_VideoDisplay
     float content_scale;
     SDL_HDROutputProperties HDR;
 
+    // This is true if we are fullscreen or fullscreen is pending
+    bool fullscreen_active;
     SDL_Window *fullscreen_window;
 
     SDL_VideoDevice *device;
@@ -504,6 +506,7 @@ typedef struct VideoBootStrap
     const char *desc;
     SDL_VideoDevice *(*create)(void);
     bool (*ShowMessageBox)(const SDL_MessageBoxData *messageboxdata, int *buttonID);  // can be done without initializing backend!
+    bool is_preferred;
 } VideoBootStrap;
 
 // Not all of these are available in a given build. Use #ifdefs, etc.
