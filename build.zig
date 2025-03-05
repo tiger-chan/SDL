@@ -3,9 +3,9 @@
 
 const std = @import("std");
 
-pub const version: std.SemanticVersion = .{ .major = 3, .minor = 2, .patch = 4 };
-const formatted_version = std.fmt.comptimePrint("SDL-{}", .{version});
-pub const vendor_info = "https://github.com/castholm/SDL 0.1.5";
+pub const version: std.SemanticVersion = .{ .major = 3, .minor = 2, .patch = 8 };
+const formatted_version = std.fmt.comptimePrint("SDL3-{}", .{version});
+pub const vendor_info = "https://github.com/castholm/SDL 0.2.0";
 pub const revision = formatted_version ++ " (" ++ vendor_info ++ ")";
 
 pub fn build(b: *std.Build) void {
@@ -47,7 +47,7 @@ pub fn build(b: *std.Build) void {
     const build_config_h: *std.Build.Step.ConfigHeader = build_config_h: {
         const cpu = target.result.cpu;
         const x86 = cpu.arch.isX86();
-        const arm = if (@hasDecl(@TypeOf(cpu.arch), "isArm")) cpu.arch.isArm() else cpu.arch.isArmOrThumb(); // Zig 0.13.0 compat
+        const arm = cpu.arch.isArm();
         const aarch64 = cpu.arch.isAARCH64();
         const loongarch = cpu.arch == .loongarch32 or cpu.arch == .loongarch64;
         break :build_config_h b.addConfigHeader(.{
@@ -492,13 +492,15 @@ pub fn build(b: *std.Build) void {
         "-Wimplicit-fallthrough",
     };
 
-    const sdl_uclibc_lib = b.addStaticLibrary(.{
-        .name = "SDL_uclib",
+    const sdl_uclibc_mod = b.createModule(.{
         .target = target,
         .optimize = optimize,
         .link_libc = true,
     });
-    const sdl_uclibc_mod = rootModulePtr(sdl_uclibc_lib);
+    const sdl_uclibc_lib = b.addStaticLibrary(.{
+        .name = "SDL_uclib",
+        .root_module = sdl_uclibc_mod,
+    });
 
     sdl_uclibc_mod.addCMacro("USING_GENERATED_CONFIG_H", "1");
 
@@ -540,23 +542,21 @@ pub fn build(b: *std.Build) void {
         },
     });
 
-    const sdl_lib: *std.Build.Step.Compile = switch (preferred_link_mode) {
-        inline else => |x| switch (x) {
-            .static => std.Build.addStaticLibrary,
-            .dynamic => std.Build.addSharedLibrary,
-        }(b, .{
-            .name = "SDL3",
-            .version = .{
-                .major = 0,
-                .minor = version.minor,
-                .patch = version.patch,
-            },
-            .target = target,
-            .optimize = optimize,
-            .link_libc = true,
-        }),
-    };
-    const sdl_mod = rootModulePtr(sdl_lib);
+    const sdl_mod = b.createModule(.{
+        .target = target,
+        .optimize = optimize,
+        .link_libc = true,
+    });
+    const sdl_lib = b.addLibrary(.{
+        .linkage = preferred_link_mode,
+        .name = "SDL3",
+        .root_module = sdl_mod,
+        .version = .{
+            .major = 0,
+            .minor = version.minor,
+            .patch = version.patch,
+        },
+    });
 
     sdl_mod.addCMacro("USING_GENERATED_CONFIG_H", "1");
     sdl_mod.addCMacro("SDL_BUILD_MAJOR_VERSION", std.fmt.comptimePrint("{}", .{version.major}));
@@ -645,6 +645,7 @@ pub fn build(b: *std.Build) void {
             "src/events/SDL_displayevents.c",
             "src/events/SDL_dropevents.c",
             "src/events/SDL_events.c",
+            "src/events/SDL_eventwatch.c",
             "src/events/SDL_keyboard.c",
             "src/events/SDL_keymap.c",
             "src/events/SDL_keysym_to_keycode.c",
@@ -739,6 +740,7 @@ pub fn build(b: *std.Build) void {
             "src/video/SDL_fillrect.c",
             "src/video/SDL_pixels.c",
             "src/video/SDL_rect.c",
+            "src/video/SDL_stb.c",
             "src/video/SDL_stretch.c",
             "src/video/SDL_surface.c",
             "src/video/SDL_video.c",
@@ -764,6 +766,7 @@ pub fn build(b: *std.Build) void {
                 "src/video/dummy/SDL_nullevents.c",
                 "src/video/dummy/SDL_nullframebuffer.c",
                 "src/video/dummy/SDL_nullvideo.c",
+                "src/core/windows/SDL_gameinput.c",
                 "src/core/windows/SDL_hid.c",
                 "src/core/windows/SDL_immdevice.c",
                 "src/core/windows/SDL_windows.c",
@@ -905,6 +908,7 @@ pub fn build(b: *std.Build) void {
                 "src/video/kmsdrm/SDL_kmsdrmvideo.c",
                 "src/video/kmsdrm/SDL_kmsdrmvulkan.c",
                 "src/video/wayland/SDL_waylandclipboard.c",
+                "src/video/wayland/SDL_waylandcolor.c",
                 "src/video/wayland/SDL_waylanddatamanager.c",
                 "src/video/wayland/SDL_waylanddyn.c",
                 "src/video/wayland/SDL_waylandevents.c",
@@ -1140,24 +1144,22 @@ pub fn build(b: *std.Build) void {
         sdl_lib.installConfigHeader(build_config_h);
     }
 
-    const install_sdl_lib = b.addInstallArtifact(sdl_lib, .{
-        // Zig 0.12.1 compat
-        .dest_dir = if (sdl_lib.producesImplib()) .{ .override = .bin } else .default,
-        .implib_dir = if (sdl_lib.producesImplib()) .{ .override = .lib } else .default,
-    });
+    const install_sdl_lib = b.addInstallArtifact(sdl_lib, .{});
 
     const install_sdl = b.step("install_sdl", "Install SDL");
     install_sdl.dependOn(&install_sdl_lib.step);
 
     b.getInstallStep().dependOn(&install_sdl_lib.step);
 
-    const sdl_test_lib = b.addStaticLibrary(.{
-        .name = "SDL3_test",
+    const sdl_test_mod = b.createModule(.{
         .target = target,
         .optimize = optimize,
         .link_libc = true,
     });
-    const sdl_test_mod = rootModulePtr(sdl_test_lib);
+    const sdl_test_lib = b.addStaticLibrary(.{
+        .name = "SDL3_test",
+        .root_module = sdl_test_mod,
+    });
 
     sdl_test_mod.addConfigHeader(build_config_h);
     sdl_test_mod.addConfigHeader(revision_h);
@@ -1256,12 +1258,3 @@ const LinuxDepsValues = struct {
         };
     }
 };
-
-fn rootModulePtr(artifact: *std.Build.Step.Compile) *std.Build.Module {
-    const struct_tag = if (@hasField(std.builtin.Type, "Type")) .Struct else .@"struct";
-    if (@typeInfo(@TypeOf(artifact.root_module)) == struct_tag) {
-        return &artifact.root_module;
-    } else {
-        return artifact.root_module;
-    }
-}
