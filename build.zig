@@ -536,12 +536,13 @@ pub fn build(b: *std.Build) void {
         "-Wimplicit-fallthrough",
     };
 
-    const sdl_mod = b.createModule(.{
+    const sdl_mod = b.addModule("sdl", .{
         .target = target,
         .optimize = optimize,
         .link_libc = true,
         .strip = strip,
         .pic = pic,
+        .root_source_file = b.path("zsrc/root.zig")
     });
     const sdl_lib = b.addLibrary(.{
         .linkage = if (emscripten) .static else preferred_linkage,
@@ -555,6 +556,8 @@ pub fn build(b: *std.Build) void {
         .use_llvm = if (emscripten) true else null,
     });
     sdl_lib.want_lto = lto;
+
+    sdl_mod.addCMacro("SDL_MAIN_HANDLED", "");
 
     sdl_mod.addCMacro("USING_GENERATED_CONFIG_H", "1");
     sdl_mod.addCMacro("SDL_BUILD_MAJOR_VERSION", std.fmt.comptimePrint("{}", .{version.major}));
@@ -1283,6 +1286,8 @@ pub fn build(b: *std.Build) void {
 
     b.getInstallStep().dependOn(&install_sdl_lib.step);
 
+    sample_step(b, sdl_mod, target, optimize);
+
     const sdl_test_mod = b.createModule(.{
         .target = target,
         .optimize = optimize,
@@ -1400,3 +1405,29 @@ const LinuxDepsValues = struct {
         };
     }
 };
+
+fn sample_step(b: *std.Build, mod: anytype, target: anytype, optimize: anytype) void {
+    const exe = b.addExecutable(.{
+        .name = "snake",
+        .root_source_file = b.path("examples/01-snake/main.zig"),
+        .target = target,
+        .optimize = optimize,
+    });
+    exe.root_module.addImport("sdl", mod);
+    b.installArtifact(exe);
+
+    const run_exe = b.step("snake", "build 01-snake example");
+    run_exe.dependOn(&exe.step);
+
+    const run_cmd = b.addRunArtifact(exe);
+    run_cmd.step.dependOn(b.getInstallStep());
+    if (b.args) |args| {
+        run_cmd.addArgs(args);
+    }
+
+    // This creates a build step. It will be visible in the `zig build --help` menu,
+    // and can be selected like this: `zig build run`
+    // This will evaluate the `run` step rather than the default, which is "install".
+    const run_step = b.step("run", "Run 01-snake example");
+    run_step.dependOn(&run_cmd.step);
+}
