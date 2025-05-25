@@ -555,7 +555,9 @@ pub fn build(b: *std.Build) void {
         },
         .use_llvm = if (emscripten) true else null,
     });
+
     sdl_lib.want_lto = lto;
+    b.installArtifact(sdl_lib);
 
     sdl_mod.addCMacro("SDL_MAIN_HANDLED", "");
 
