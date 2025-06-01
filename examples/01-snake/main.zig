@@ -167,7 +167,7 @@ const App = struct {
         kv(sdl.app_metadata.TYPE_STRING, "game"),
     };
 
-    pub fn on_init(appstate: *?[*]SnakeAppState, args: []const [*:0]u8) sdl.AppResult {
+    pub fn on_init(appstate: *?*SnakeAppState, args: []const [*:0]u8) sdl.AppResult {
         _ = args;
 
         if (!sdl.app_metadata.set("Example Snake game", "1.0", "com.example.Snake")) {
@@ -185,14 +185,14 @@ const App = struct {
             return .Failure;
         }
 
-        const as: ?[]SnakeAppState = std.heap.page_allocator.alloc(SnakeAppState, 1) catch null;
-        if (as) |_| {} else {
+        const as: ?*SnakeAppState = std.heap.page_allocator.create(SnakeAppState) catch null;
+        if (as == null) {
             return .Failure;
         }
-        appstate.* = @ptrCast(as.?.ptr);
+        appstate.* = as.?;
 
         if (sdl.create_window_and_renderer("examples/demo/snake", WINDOW_WIDTH, WINDOW_HEIGHT, .{})) |r| {
-            as.?[0] = .{
+            as.?.* = .{
                 .ctx = Context.init(),
                 .last_step = sdl.get_ticks(),
                 .window = r.window,
@@ -205,9 +205,9 @@ const App = struct {
         return .Continue;
     }
 
-    pub fn iter(appstates: ?[*]SnakeAppState) sdl.AppResult {
+    pub fn iter(appstates: ?*SnakeAppState) sdl.AppResult {
         if (appstates != null) {
-            var appstate = &appstates.?[0];
+            var appstate = appstates.?;
             const ctx = &appstate.ctx;
             const now = sdl.get_ticks();
 
@@ -247,9 +247,9 @@ const App = struct {
         return .Continue;
     }
 
-    pub fn on_event(appstates: ?[*]SnakeAppState, event: *sdl.Event) sdl.AppResult {
+    pub fn on_event(appstates: ?*SnakeAppState, event: *sdl.Event) sdl.AppResult {
         if (appstates != null) {
-            var as = &appstates.?[0];
+            var as = appstates.?;
             const ctx: *Context = &as.ctx;
             switch (event.type) {
                 .Quit => {
@@ -283,15 +283,15 @@ const App = struct {
         return .Continue;
     }
 
-    pub fn on_quit(appstate: ?[*]SnakeAppState, result: sdl.AppResult) void {
+    pub fn on_quit(appstate: ?*SnakeAppState, result: sdl.AppResult) void {
         _ = result;
-        if (appstate) |*as| {
-            if (as.*[0].joystick) |js| {
+        if (appstate != null) {
+            if (appstate.?.joystick) |js| {
                 sdl.joystick.close(js);
             }
-            sdl.render.destroy(as.*[0].renderer);
-            sdl.video.destroy_window(as.*[0].window);
-            std.heap.page_allocator.free(as.*[0..1]);
+            sdl.render.destroy(appstate.?.renderer);
+            sdl.video.destroy_window(appstate.?.window);
+            std.heap.page_allocator.destroy(appstate.?);
         }
     }
 };

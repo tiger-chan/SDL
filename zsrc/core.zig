@@ -32,22 +32,22 @@ fn Api(comptime App: type) type {
 
         fn on_init(appstate: *?*anyopaque, argc: c_int, argv: [*]const [*:0]u8) callconv(.c) c_int {
             const len: usize = @intCast(argc);
-            const state: *?[*]Self.AppState = @ptrCast(appstate);
+            const state: *?*Self.AppState = @ptrCast(appstate);
             return @intFromEnum(App.on_init(state, argv[0..len]));
         }
 
         fn on_event(appstate: ?*anyopaque, event: *se.Event) callconv(.c) si.c_AppResult {
-            const state: ?[*]Self.AppState = if (appstate) |as| @alignCast(@ptrCast(as)) else null;
+            const state: ?*Self.AppState = if (appstate) |as| @alignCast(@ptrCast(as)) else null;
             return @intFromEnum(App.on_event(state, event));
         }
 
         fn on_quit(appstate: ?*anyopaque, result: si.c_AppResult) callconv(.c) void {
-            const state: ?[*]Self.AppState = if (appstate) |as| @alignCast(@ptrCast(as)) else null;
+            const state: ?*Self.AppState = if (appstate) |as| @alignCast(@ptrCast(as)) else null;
             App.on_quit(state, @enumFromInt(result));
         }
 
         fn on_iter(appstate: ?*anyopaque) callconv(.c) si.c_AppResult {
-            const state: ?[*]Self.AppState = if (appstate) |as| @alignCast(@ptrCast(as)) else null;
+            const state: ?*Self.AppState = if (appstate) |as| @alignCast(@ptrCast(as)) else null;
             return @intFromEnum(App.iter(state));
         }
     };
@@ -62,6 +62,7 @@ fn Api(comptime App: type) type {
 /// process's initial thread.
 /// ```zig
 /// const App = struct {
+///     pub const AppState = struct { };
 ///     pub fn on_init(appstate: *?*anyopaque, args: []const [*:0]u8) sdl.AppResult {
 ///         _ = appstate;
 ///         _ = args;
