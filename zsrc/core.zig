@@ -63,27 +63,27 @@ fn Api(comptime App: type) type {
 /// ```zig
 /// const App = struct {
 ///     pub const AppState = struct { };
-///     pub fn on_init(appstate: *?*anyopaque, args: []const [*:0]u8) sdl.AppResult {
+///     pub fn on_init(appstate: *?*AppState, args: []const [*:0]u8) sdl.AppResult {
 ///         _ = appstate;
 ///         _ = args;
 ///         std.debug.print("App.on_init\n", .{});
 ///         return .Success;
 ///     }
 ///
-///     pub fn iter(appstate: ?*anyopaque) sdl.AppResult {
+///     pub fn iter(appstate: ?*AppState) sdl.AppResult {
 ///         _ = appstate;
 ///         std.debug.print("App.iter\n", .{});
 ///         return .Success;
 ///     }
 ///
-///     pub fn on_event(appstate: ?*anyopaque, event: *sdl.events.Event) sdl.AppResult {
+///     pub fn on_event(appstate: ?*AppState, event: *sdl.events.Event) sdl.AppResult {
 ///         _ = appstate;
 ///         _ = event;
 ///         std.debug.print("App.on_event\n", .{});
 ///         return .Failure;
 ///     }
 ///
-///     pub fn on_quit(appstate: ?*anyopaque, result: sdl.AppResult) void {
+///     pub fn on_quit(appstate: ?*AppState, result: sdl.AppResult) void {
 ///         _ = appstate;
 ///         _ = result;
 ///         std.debug.print("App.quit\n", .{});
