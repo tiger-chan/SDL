@@ -1260,7 +1260,7 @@ pub fn build(b: *std.Build) void {
         sdl_mod.linkFramework("CoreHaptics", .{ .weak = true });
     }
 
-    sdl_lib.installHeadersDirectory(b.path("include/SDL3"), "SDL3", .{
+    sdl_lib.installHeadersDirectory(b.path("include"), "include", .{
         .exclude_extensions = &.{
             "SDL_revision.h",
             "SDL_test.h",

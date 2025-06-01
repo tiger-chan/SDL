@@ -76,7 +76,7 @@ fn Api(comptime App: type) type {
 ///         return .Success;
 ///     }
 ///
-///     pub fn on_event(appstate: ?*AppState, event: *sdl.events.Event) sdl.AppResult {
+///     pub fn on_event(appstate: ?*AppState, event: *sdl.Event) sdl.AppResult {
 ///         _ = appstate;
 ///         _ = event;
 ///         std.debug.print("App.on_event\n", .{});
