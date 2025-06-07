@@ -90,10 +90,10 @@ fn Api(comptime App: type) type {
 ///     }
 /// };
 ///
-/// pub fn main() void {
+/// pub fn main() !void {
 ///    const allocator = std.heap.page_allocator;
 ///    const args = try std.process.argsAlloc(allocator);
-///     if (sdl.run_app(args, App) != 0) @panic("Failed to start the application");
+///    if (sdl.run_app(args, App) != 0) @panic("Failed to start the application");
 /// }
 /// ```
 pub fn run_app(args: [][:0]u8, comptime app: type) i32 {
