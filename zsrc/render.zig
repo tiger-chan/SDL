@@ -1,17 +1,13 @@
-pub const video = @import("video.zig");
-pub const c_rect = @import("rect.zig");
+const video = @import("video.zig");
+const c_rect = @import("rect.zig");
 const c_WindowFlags = video.c_WindowFlags;
 const WindowFlags = video.WindowFlags;
 const Window = video.Window;
+const Surface = @import("surface.zig").Surface;
+const FRect = @import("rect.zig").FRect;
 
 pub const Renderer = opaque {};
-
-extern fn SDL_CreateWindowAndRenderer(title: [*:0]const u8, width: c_int, height: c_int, window_flags: c_WindowFlags, window: **Window, renderer: **Renderer) callconv(.c) bool;
-extern fn SDL_DestroyRenderer(renderer: *Renderer) callconv(.c) void;
-extern fn SDL_SetRenderDrawColor(renderer: *Renderer, r: u8, g: u8, b: u8, a: u8) callconv(.c) bool;
-extern fn SDL_RenderFillRect(renderer: *Renderer, rect: *const c_rect.FRect) callconv(.c) bool;
-extern fn SDL_RenderClear(renderer: *Renderer) callconv(.c) bool;
-extern fn SDL_RenderPresent(renderer: *Renderer) callconv(.c) bool;
+pub const Texture = opaque {};
 
 /// Create a window and default renderer.
 ///
@@ -123,3 +119,147 @@ pub fn fill_rect(renderer: *Renderer, rect: *const c_rect.FRect) bool {
 pub fn present(renderer: *Renderer) bool {
     return SDL_RenderPresent(renderer);
 }
+
+/// Create a texture from an existing surface.
+///
+/// The surface is not modified or freed by this function.
+///
+/// The SDL_TextureAccess hint for the created texture is
+/// `SDL_TEXTUREACCESS_STATIC`.
+///
+/// The pixel format of the created texture may be different from the pixel
+/// format of the surface, and can be queried using the
+/// SDL_PROP_TEXTURE_FORMAT_NUMBER property.
+///
+/// *param* renderer the rendering context.
+/// *param* surface the SDL_Surface structure containing pixel data used to fill
+///                the texture.
+/// *returns* the created texture or NULL on failure; call sdl.err.get() for
+///          more information.
+///
+/// *threadsafety* This function should only be called on the main thread.
+pub fn create_texture_from_surface(renderer: *Renderer, surface: *Surface) ?*Texture {
+    return SDL_CreateTextureFromSurface(renderer, surface);
+}
+
+/// Get the output size in pixels of a rendering context.
+///
+/// This returns the true output size in pixels, ignoring any render targets or
+/// logical size and presentation.
+///
+/// For the output size of the current rendering target, with logical size
+/// adjustments, use sdl.render.current_output_size() instead.
+///
+/// *param* renderer the rendering context.
+/// *param* w a pointer filled in with the width in pixels.
+/// *param* h a pointer filled in with the height in pixels.
+/// *returns* height and width on success or null on failure; call sdl.err.get() for more
+///          information.
+///
+/// *threadsafety* This function should only be called on the main thread.
+pub fn output_size(renderer: *Renderer) ?struct { w: i32, h: i32 } {
+    var w: i32 = undefined;
+    var h: i32 = undefined;
+    if (SDL_GetRenderOutputSize(renderer, &w, &h)) {
+        return .{ .w = w, .h = h };
+    }
+    return null;
+}
+
+/// Get the current output size in pixels of a rendering context.
+///
+/// If a rendering target is active, this will return the size of the rendering
+/// target in pixels, otherwise return the value of sdl.render.output_size().
+///
+/// Rendering target or not, the output will be adjusted by the current logical
+/// presentation state, dictated by SDL_SetRenderLogicalPresentation().
+///
+/// *param* renderer the rendering context.
+/// *param* w a pointer filled in with the current width.
+/// *param* h a pointer filled in with the current height.
+/// *returns* height and width on success or null on failure; call sdl.err.get() for more
+///          information.
+///
+/// *threadsafety* This function should only be called on the main thread.
+pub fn current_output_size(renderer: *Renderer) ?struct { w: i32, h: i32 } {
+    var w: i32 = undefined;
+    var h: i32 = undefined;
+    if (SDL_GetCurrentRenderOutputSize(renderer, &w, &h)) {
+        return .{ .w = w, .h = h };
+    }
+    return null;
+}
+
+/// Set the drawing scale for rendering on the current target.
+///
+/// The drawing coordinates are scaled by the x/y scaling factors before they
+/// are used by the renderer. This allows resolution independent drawing with a
+/// single coordinate system.
+///
+/// If this results in scaling or subpixel drawing by the rendering backend, it
+/// will be handled using the appropriate quality hints. For best results use
+/// integer scaling factors.
+///
+/// Each render target has its own scale. This function sets the scale for the
+/// current render target.
+///
+/// *param* renderer the rendering context.
+/// *param* scaleX the horizontal scaling factor.
+/// *param* scaleY the vertical scaling factor.
+/// *returns* true on success or false on failure; call sdl.err.get() for more
+///          information.
+///
+/// *threadsafety* This function should only be called on the main thread.
+pub fn set_scale(renderer: *Renderer, scale_x: f32, scale_y: f32) bool {
+    return SDL_SetRenderScale(renderer, scale_x, scale_y);
+}
+
+/// Get the size of a texture, as floating point values.
+///
+/// *param* texture the texture to query.
+/// *param* w a pointer filled in with the width of the texture in pixels. This
+///          argument can be NULL if you don't need this information.
+/// *param* h a pointer filled in with the height of the texture in pixels. This
+///          argument can be NULL if you don't need this information.
+/// *returns* true on success or false on failure; call SDL_GetError() for more
+///          information.
+///
+/// *threadsafety* This function should only be called on the main thread.
+pub fn texture_size(t: *Texture) ?struct { w: f32, h: f32 } {
+    var w: f32 = undefined;
+    var h: f32 = undefined;
+    if (SDL_GetTextureSize(t, &w, &h)) {
+        return .{ .w = w, .h = h };
+    }
+    return null;
+}
+
+/// Copy a portion of the texture to the current rendering target at subpixel
+/// precision.
+///
+/// *param* renderer the renderer which should copy parts of a texture.
+/// *param* texture the source texture.
+/// *param* srcrect a pointer to the source rectangle, or NULL for the entire
+///                texture.
+/// *param* dstrect a pointer to the destination rectangle, or NULL for the
+///                entire rendering target.
+/// *returns* true on success or false on failure; call SDL_GetError() for more
+///          information.
+///
+/// *threadsafety* This function should only be called on the main thread.
+pub fn texture(renderer: *Renderer, t: *Texture, src_rect: ?*const FRect, dst_rect: ?*const FRect) bool {
+    return SDL_RenderTexture(renderer, t, src_rect, dst_rect);
+}
+
+extern fn SDL_CreateWindowAndRenderer(title: [*:0]const u8, width: c_int, height: c_int, window_flags: c_WindowFlags, window: **Window, renderer: **Renderer) callconv(.c) bool;
+extern fn SDL_DestroyRenderer(renderer: *Renderer) callconv(.c) void;
+extern fn SDL_SetRenderDrawColor(renderer: *Renderer, r: u8, g: u8, b: u8, a: u8) callconv(.c) bool;
+extern fn SDL_RenderClear(renderer: *Renderer) callconv(.c) bool;
+extern fn SDL_RenderFillRect(renderer: *Renderer, rect: *const c_rect.FRect) callconv(.c) bool;
+extern fn SDL_RenderPresent(renderer: *Renderer) callconv(.c) bool;
+extern fn SDL_RenderTexture(renderer: *Renderer, t: *Texture, src_rect: ?*const FRect, dst_rect: ?*const FRect) bool;
+extern fn SDL_CreateTextureFromSurface(renderer: *Renderer, surface: *Surface) callconv(.c) ?*Texture;
+extern fn SDL_GetCurrentRenderOutputSize(renderer: *Renderer, w: *i32, h: *i32) bool;
+extern fn SDL_GetRenderOutputSize(renderer: *Renderer, w: *i32, h: *i32) callconv(.c) bool;
+extern fn SDL_GetTextureSize(texture: *Texture, w: *f32, h: *f32) callconv(.c) bool;
+extern fn SDL_SetRenderScale(renderer: *Renderer, scale_x: f32, scale_y: f32) callconv(.c) bool;
